@@ -3,14 +3,16 @@ package jobs
 import (
 	"bytes"
 	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/mail"
-	"github.com/lisijie/webcron/app/models"
 	"html/template"
 	"os/exec"
 	"runtime/debug"
 	"strings"
 	"time"
+
+	"github.com/beego/beego/v2/core/logs"
+	beego "github.com/beego/beego/v2/server/web"
+	"haedu.gov.cn/dzz/tt/app/mail"
+	"haedu.gov.cn/dzz/tt/app/models"
 )
 
 var mailTpl *template.Template
@@ -36,7 +38,6 @@ func init() {
 如果要取消邮件通知，请登录到系统进行设置<br />
 </p>
 `)
-
 }
 
 type Job struct {
@@ -96,13 +97,13 @@ func (j *Job) GetLogId() int64 {
 
 func (j *Job) Run() {
 	if !j.Concurrent && j.status > 0 {
-		beego.Warn(fmt.Sprintf("任务[%d]上一次执行尚未结束，本次被忽略。", j.id))
+		logs.Warn(fmt.Sprintf("任务[%d]上一次执行尚未结束，本次被忽略。", j.id))
 		return
 	}
 
 	defer func() {
 		if err := recover(); err != nil {
-			beego.Error(err, "\n", string(debug.Stack()))
+			logs.Error(err, "\n", string(debug.Stack()))
 		}
 	}()
 
@@ -113,7 +114,7 @@ func (j *Job) Run() {
 		}()
 	}
 
-	beego.Debug(fmt.Sprintf("开始执行任务: %d", j.id))
+	logs.Debug(fmt.Sprintf("开始执行任务: %d", j.id))
 
 	j.status++
 	defer func() {
@@ -187,7 +188,7 @@ func (j *Job) Run() {
 			ccList = strings.Split(j.task.NotifyEmail, "\n")
 		}
 		if !mail.SendMail(user.Email, user.UserName, title, content.String(), ccList) {
-			beego.Error("发送邮件超时：", user.Email)
+			logs.Error("发送邮件超时：", user.Email)
 		}
 	}
 }

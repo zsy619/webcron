@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/controllers"
-	"github.com/lisijie/webcron/app/jobs"
-	_ "github.com/lisijie/webcron/app/mail"
-	"github.com/lisijie/webcron/app/models"
 	"html/template"
 	"net/http"
+
+	"github.com/beego/beego/v2/core/logs"
+	beego "github.com/beego/beego/v2/server/web"
+	"haedu.gov.cn/dzz/tt/app/controllers"
+	"haedu.gov.cn/dzz/tt/app/jobs"
+	_ "haedu.gov.cn/dzz/tt/app/mail"
+	"haedu.gov.cn/dzz/tt/app/models"
 )
 
 const VERSION = "1.0.0"
@@ -25,8 +27,9 @@ func main() {
 	})
 
 	// 生产环境不输出debug日志
-	if beego.AppConfig.String("runmode") == "prod" {
-		beego.SetLevel(beego.LevelInformational)
+	runMode, _ := beego.AppConfig.String("runmode")
+	if runMode == "prod" {
+		logs.SetLevel(logs.LevelInformational)
 	}
 	beego.AppConfig.Set("version", VERSION)
 

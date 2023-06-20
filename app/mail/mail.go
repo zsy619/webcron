@@ -2,9 +2,11 @@ package mail
 
 import (
 	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/utils"
 	"time"
+
+	"github.com/beego/beego/v2/core/logs"
+	"github.com/beego/beego/v2/core/utils"
+	beego "github.com/beego/beego/v2/server/web"
 )
 
 var (
@@ -14,11 +16,11 @@ var (
 
 func init() {
 	queueSize, _ := beego.AppConfig.Int("mail.queue_size")
-	host := beego.AppConfig.String("mail.host")
+	host, _ := beego.AppConfig.String("mail.host")
 	port, _ := beego.AppConfig.Int("mail.port")
-	username := beego.AppConfig.String("mail.user")
-	password := beego.AppConfig.String("mail.password")
-	from := beego.AppConfig.String("mail.from")
+	username, _ := beego.AppConfig.String("mail.user")
+	password, _ := beego.AppConfig.String("mail.password")
+	from, _ := beego.AppConfig.String("mail.from")
 	if port == 0 {
 		port = 25
 	}
@@ -35,7 +37,7 @@ func init() {
 					return
 				}
 				if err := m.Send(); err != nil {
-					beego.Error("SendMail:", err.Error())
+					logs.Error("SendMail:", err.Error())
 				}
 			}
 		}

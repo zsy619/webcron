@@ -1,14 +1,15 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-	libcron "github.com/lisijie/cron"
-	"github.com/lisijie/webcron/app/jobs"
-	"github.com/lisijie/webcron/app/libs"
-	"github.com/lisijie/webcron/app/models"
 	"strconv"
 	"strings"
 	"time"
+
+	beego "github.com/beego/beego/v2/server/web"
+	libcron "haedu.gov.cn/dzz/tt/app/cron"
+	"haedu.gov.cn/dzz/tt/app/jobs"
+	"haedu.gov.cn/dzz/tt/app/libs"
+	"haedu.gov.cn/dzz/tt/app/models"
 )
 
 type TaskController struct {
@@ -72,7 +73,6 @@ func (this *TaskController) List() {
 
 // 添加任务
 func (this *TaskController) Add() {
-
 	if this.isPost() {
 		task := new(models.Task)
 		task.UserId = this.userId

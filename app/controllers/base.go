@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-	"github.com/lisijie/webcron/app/libs"
-	"github.com/lisijie/webcron/app/models"
 	"strconv"
 	"strings"
+
+	beego "github.com/beego/beego/v2/server/web"
+	"haedu.gov.cn/dzz/tt/app/libs"
+	"haedu.gov.cn/dzz/tt/app/models"
 )
 
 const (
@@ -30,8 +31,8 @@ func (this *BaseController) Prepare() {
 	this.actionName = strings.ToLower(actionName)
 	this.auth()
 
-	this.Data["version"] = beego.AppConfig.String("version")
-	this.Data["siteName"] = beego.AppConfig.String("site.name")
+	this.Data["version"], _ = beego.AppConfig.String("version")
+	this.Data["siteName"], _ = beego.AppConfig.String("site.name")
 	this.Data["curRoute"] = this.controllerName + "." + this.actionName
 	this.Data["curController"] = this.controllerName
 	this.Data["curAction"] = this.actionName
@@ -39,7 +40,7 @@ func (this *BaseController) Prepare() {
 	this.Data["loginUserName"] = this.userName
 }
 
-//登录状态验证
+// 登录状态验证
 func (this *BaseController) auth() {
 	arr := strings.Split(this.Ctx.GetCookie("auth"), "|")
 	if len(arr) == 2 {
@@ -61,7 +62,7 @@ func (this *BaseController) auth() {
 	}
 }
 
-//渲染模版
+// 渲染模版
 func (this *BaseController) display(tpl ...string) {
 	var tplname string
 	if len(tpl) > 0 {
@@ -114,7 +115,7 @@ func (this *BaseController) ajaxMsg(msg interface{}, msgno int) {
 	this.jsonResult(out)
 }
 
-//获取用户IP地址
+// 获取用户IP地址
 func (this *BaseController) getClientIp() string {
 	s := strings.Split(this.Ctx.Request.RemoteAddr, ":")
 	return s[0]
